@@ -1,0 +1,107 @@
+const { PDFParse } = require("pdf-parse");
+
+const generateInterviewReport = require("../services/ai.services");
+const interviewReportModel = require("../models/interviewReport.model");
+
+async function generateInterviewReportController(req, res) {
+    try {
+        // Uploaded resume PDF file
+        const resumeFile = req.file;
+
+        // Check whether PDF was uploaded
+        if (!resumeFile) {
+            return res.status(400).json({
+                message: "Resume PDF is required"
+            });
+        }
+
+        // Get self description and job description
+        const { selfDescription, jobDescription } = req.body;
+
+        // Validate required fields
+        if (!jobDescription) {
+            return res.status(400).json({
+                message: "Job description is required"
+            });
+        }
+
+        // Parse PDF buffer and extract text
+        const parser = new PDFParse({ data: resumeFile.buffer });
+        const resumeData = await parser.getText();
+        await parser.destroy();
+
+        // Extract only text from parsed PDF
+        const resumeContent = resumeData.text;
+
+        // Generate interview report using AI
+        const interviewReportByAi = await generateInterviewReport({
+            resume: resumeContent,
+            jobDescription,
+            selfDescription
+        });
+
+        // Always provide the required report title, even if the AI omits it.
+        const title = interviewReportByAi.title || req.body.title ||
+            `Interview Report - ${jobDescription.trim().slice(0, 60)}`;
+
+        // Save generated report in MongoDB
+        const interviewReport = await interviewReportModel.create({
+            resume: resumeContent,
+            selfDescription,
+            jobDescription,
+
+            // Add AI generated report fields
+            ...interviewReportByAi,
+
+            title,
+
+            // Associate report with logged-in user
+            user: req.user.id
+        });
+
+        // Send successful response
+        return res.status(201).json({
+            message: "Interview report generated successfully",
+            interviewReport
+        });
+
+    } catch (error) {
+        console.error("Generate interview report error:", error);
+
+        return res.status(500).json({
+            message: "Failed to generate interview report",
+            error: error.message
+        });
+    }
+}
+
+async function getInterviewReportByIdController(req,res){
+    const{interviewId}=req.params;
+    const interviewReport=await interviewReportModel.findOne({_id:interviewId,user:req.user.id})
+    if(!interviewReport){
+        return res.status(404).json({
+            message: "Interview report not found"
+        });
+    }
+    return res.status(200).json({
+        message: "Interview report retrieved successfully",
+        interviewReport
+    });
+}
+
+
+async function getAllInterviewReportController(req,res){
+
+const interviewReports=(await interviewReportModel.find({user:req.user.id})).sort({createdAt:-1}).select("-resume -selfDescription -jobDescription _v -technicalQuestion -behaviourQuestion -skillGap -preparationPlan")
+
+return res.status(200).json({   
+    message: "Interview reports retrieved successfully",
+    interviewReports
+});
+}
+
+module.exports = {
+    generateInterviewReportController,
+    getInterviewReportByIdController,
+    getAllInterviewReportController
+};
