@@ -6,6 +6,8 @@
 
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");
+const { zodToJsonSchema } = require("zod-to-json-schema");
+const puppeteer=require("puppeteer")
 
 // ======================================================
 // INTERVIEW REPORT SCHEMA
@@ -314,4 +316,47 @@ Return only the requested JSON structure.
 // EXPORT
 // ======================================================
 
-module.exports =  generateInterviewReport
+async function generatePdfFormHtml(htmlContent){
+    const browser=await puppeteer.launch()
+    try {
+        const page=await browser.newPage()
+        await page.setContent(htmlContent,{waitUntil:"networkidle0"})
+        return await page.pdf({format:"A4"})
+    } finally {
+        await browser.close()
+    }
+}
+
+
+// ai se html genearte karbana rahega
+// pdf generation ke liye ham package like npm install puppeteer
+
+
+async function generateResumePdf({resume,selfDescription,jobDescription}){
+    const resumePdfSchema=z.object({
+        html:z.string().describe("the HTML content of the resume which can be converted to pdf using  puppeteer package")
+    })
+
+    const prompt=`generate resume for condidate with the following details:
+    Resume:${resume}
+    self Description :${selfDescription}
+    job Description:${jobDescription}
+    the response should be a JSON object with a single field "html" containing complete,
+    self-contained HTML suitable for printing as an A4 resume.
+    `
+
+    const response=await ai.models.generateContent({
+        model:"gemini-3.6-flash",
+        contents:prompt,
+        config:{
+            responseMimeType:"application/json",
+            responseSchema:zodToJsonSchema(resumePdfSchema)
+        }
+    })
+
+    const json=JSON.parse(response.text)
+    return generatePdfFormHtml(json.html)
+}
+
+
+module.exports =  {generateInterviewReport,generateResumePdf}
