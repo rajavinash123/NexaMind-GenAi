@@ -52,10 +52,10 @@ async function login(data) {
 // GET CURRENT USER
 // ===============================
 
-async function getMe(id) {
+async function getMe() {
     try {
         const response = await axios.get(
-            `${BASE_URI}/api/auth/get-me/${id}`,
+            `${BASE_URI}/api/auth/get-me`,
             {
                 withCredentials: true
             }
@@ -74,11 +74,10 @@ async function getMe(id) {
 // LOGOUT USER
 // ===============================
 
-async function logout(id) {
+async function logout() {
     try {
-        const response = await axios.post(
-            `${BASE_URI}/api/auth/logout/${id}`,
-            {},
+        const response = await axios.get(
+            `${BASE_URI}/api/auth/logout`,
             {
                 withCredentials: true
             }

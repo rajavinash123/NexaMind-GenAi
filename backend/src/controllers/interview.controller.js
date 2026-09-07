@@ -5,15 +5,8 @@ const interviewReportModel = require("../models/interviewReport.model");
 
 async function generateInterviewReportController(req, res) {
     try {
-        // Uploaded resume PDF file
+        // Resume is optional when the candidate provides a self description.
         const resumeFile = req.file;
-
-        // Check whether PDF was uploaded
-        if (!resumeFile) {
-            return res.status(400).json({
-                message: "Resume PDF is required"
-            });
-        }
 
         // Get self description and job description
         const { selfDescription, jobDescription } = req.body;
@@ -25,13 +18,20 @@ async function generateInterviewReportController(req, res) {
             });
         }
 
-        // Parse PDF buffer and extract text
-        const parser = new PDFParse({ data: resumeFile.buffer });
-        const resumeData = await parser.getText();
-        await parser.destroy();
+        if (!resumeFile && !selfDescription?.trim()) {
+            return res.status(400).json({
+                message: "Upload a resume or provide a self description"
+            });
+        }
 
-        // Extract only text from parsed PDF
-        const resumeContent = resumeData.text;
+        // Parse PDF buffer and extract text
+        let resumeContent = "";
+        if (resumeFile) {
+            const parser = new PDFParse({ data: resumeFile.buffer });
+            const resumeData = await parser.getText();
+            await parser.destroy();
+            resumeContent = resumeData.text;
+        }
 
         // Generate interview report using AI
         const interviewReportByAi = await generateInterviewReport({
@@ -92,7 +92,11 @@ async function getInterviewReportByIdController(req,res){
 
 async function getAllInterviewReportController(req,res){
 
-const interviewReports=(await interviewReportModel.find({user:req.user.id})).sort({createdAt:-1}).select("-resume -selfDescription -jobDescription _v -technicalQuestion -behaviourQuestion -skillGap -preparationPlan")
+const interviewReports = await interviewReportModel
+    .find({ user: req.user.id })
+    .sort({ createdAt: -1 })
+    .select("-resume -selfDescription -jobDescription -__v")
+    .lean();
 
 return res.status(200).json({   
     message: "Interview reports retrieved successfully",

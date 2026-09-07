@@ -29,7 +29,7 @@ const Login = () => {
 
         // Sirf successful login ke baad navigate
         if (success) {
-            navigate("/")
+            navigate("/app")
         }
     }
 

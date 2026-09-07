@@ -40,7 +40,7 @@ function Register() {
 
 
             // Registration successful hone ke baad login page par jao
-            navigate("/");
+            navigate("/login");
 
         } catch (error) {
 

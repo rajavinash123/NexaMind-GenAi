@@ -1,5 +1,5 @@
-import { createContext, useState } from "react";
-
+import { createContext, useEffect, useState } from "react";
+import { getMe } from "./services/api.auth";
 // Global authentication context create kar rahe hain
 export const AuthContext = createContext();
 
@@ -13,8 +13,23 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   // API request chal rahi hai ya nahi
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const restoreUser = async () => {
+      try {
+        const data = await getMe();
+        setUser(data.user);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    restoreUser();
+  }, []);
+  
 
   return (
     <AuthContext.Provider

@@ -5,21 +5,18 @@ import {
     login,
     register,
     logout,
-    getMe
 } from "../services/api.auth";
 
 
 export const useAuth = () => {
 
-    // AuthContext se global authentication state access
-    const context = useContext(AuthContext);
-
+    // Global authentication state access
     const {
         user,
         setUser,
         loading,
         setLoading
-    } = context;
+    } = useContext(AuthContext);
 
 
     // =========================
@@ -29,33 +26,30 @@ export const useAuth = () => {
     const handleLogin = async ({ email, password }) => {
 
         try {
-
-            // API request start
+            // Login request start
             setLoading(true);
 
-            // Backend login API call
+            // Backend login API
             const data = await login({
                 email,
                 password
             });
 
-            // Backend se received user ko global state mein save
+            // Login ke baad user ko global state mein save
             setUser(data.user);
 
-            // Component ko success information return
             return data;
 
         } catch (err) {
 
-            // Login error
             console.error("Login failed:", err);
 
-            // Error ko component tak bhejo
+            // Error ko Login component tak bhejo
             throw err;
 
         } finally {
 
-            // Success ya error dono cases mein loading false
+            // Request complete
             setLoading(false);
         }
     };
@@ -72,19 +66,19 @@ export const useAuth = () => {
     }) => {
 
         try {
-
-            // Registration start
+            // Registration request start
             setLoading(true);
 
-            // Backend register API call
+            // Backend register API
             const data = await register({
                 username,
                 email,
                 password
             });
 
-            // Registered user ko global state mein save
-            setUser(data.user);
+            // IMPORTANT:
+            // Register ke baad user ko login page par bhejna hai,
+            // isliye yahan setUser() ki zarurat nahi hai.
 
             return data;
 
@@ -108,14 +102,12 @@ export const useAuth = () => {
     const handleLogout = async () => {
 
         try {
-
-            // Logout request start
             setLoading(true);
 
-            // Backend logout API call
+            // Backend logout
             await logout();
 
-            // Frontend authentication state clear
+            // Frontend auth state clear
             setUser(null);
 
         } catch (err) {
@@ -126,7 +118,6 @@ export const useAuth = () => {
 
         } finally {
 
-            // Logout complete
             setLoading(false);
         }
     };
