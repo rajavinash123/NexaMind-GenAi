@@ -1,23 +1,48 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
+
+    // useAuth se authentication state aur login function
+    const { loading, handleLogin } = useAuth();
+
+    // Login form ki local state
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    // Programmatically page change karne ke liye
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+
+    // Form submit handler
+    async function handleSubmit(e) {
+
+        // Browser ka default form submit prevent
         e.preventDefault();
 
-        console.log({
+        // Login API call
+        const success = await handleLogin({
             email,
             password
         });
 
-        // Login successful hone ke baad
-        navigate("/dashboard");
+        // Sirf successful login ke baad navigate
+        if (success) {
+            navigate("/")
+        }
     }
+
+
+  // Jab registration API request chal rahi hai
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <h1>Loading.....</h1>
+            </div>
+        );
+    }
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -29,6 +54,7 @@ const Login = () => {
 
                 {/* Heading */}
                 <div className="text-center mb-6">
+
                     <h1 className="text-3xl font-bold text-gray-900">
                         Welcome Back
                     </h1>
@@ -36,10 +62,13 @@ const Login = () => {
                     <p className="mt-2 text-sm text-gray-500">
                         Login to your account
                     </p>
+
                 </div>
+
 
                 {/* Email */}
                 <div className="mb-4">
+
                     <label className="block mb-2 text-sm font-medium text-gray-700">
                         Email
                     </label>
@@ -51,10 +80,13 @@ const Login = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     />
+
                 </div>
+
 
                 {/* Password */}
                 <div className="mb-6">
+
                     <label className="block mb-2 text-sm font-medium text-gray-700">
                         Password
                     </label>
@@ -66,29 +98,36 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     />
+
                 </div>
+
 
                 {/* Login Button */}
                 <button
                     type="submit"
-                    className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+                    disabled={loading}
+                    className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
                 >
                     Login
                 </button>
 
+
                 {/* Register Link */}
                 <p className="mt-6 text-center text-sm text-gray-500">
+
                     Don't have an account?{" "}
 
                     <Link
                         to="/register"
-                        className="text-blue-600 cursor-pointer hover:underline"
+                        className="text-blue-600 hover:underline"
                     >
                         Register
                     </Link>
+
                 </p>
 
             </form>
+
         </div>
     );
 };

@@ -1,10 +1,13 @@
 import React from 'react'
 import { RouterProvider } from "react-router-dom"
 import {router} from "./api.router"
+import { AuthProvider } from "./features/auth/auth.context"
 
 const App = () => {
   return (
-   <RouterProvider router={router}/>
+   <AuthProvider>
+     <RouterProvider router={router}/>
+   </AuthProvider>
   )
 }
 

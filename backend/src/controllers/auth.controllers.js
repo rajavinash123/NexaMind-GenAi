@@ -11,6 +11,7 @@ async function registerUserControllers(req, res) {
 
     // Get user data from request body
     const { username, email, password } = req.body;
+  
 
     // Check if all required fields are provided
     if (!username || !password || !email) {

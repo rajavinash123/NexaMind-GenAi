@@ -103,3 +103,10 @@ export default {
     logout,
     getMe
 };
+
+export {
+    register,
+    login,
+    logout,
+    getMe
+};
