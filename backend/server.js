@@ -28,7 +28,10 @@ const connectToDB = require("./src/config/database");
 // Connect MongoDB
 connectToDB();
 
-// Start server
-app.listen(3000, () => {
-    console.log("Server is running at http://localhost:3000");
-});
+if (require.main === module) {
+    app.listen(3000, () => {
+        console.log("Server is running at http://localhost:3000");
+    });
+}
+
+module.exports = app;

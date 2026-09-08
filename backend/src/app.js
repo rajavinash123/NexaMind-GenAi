@@ -13,8 +13,8 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: /^http:\/\/localhost:\d+$/,
-    credentials:true
+    origin: process.env.FRONTEND_URL || /^http:\/\/localhost:\d+$/,
+    credentials: true
 }))
 
 app.use("/api/auth", authRouter)
