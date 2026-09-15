@@ -1,41 +1,149 @@
-# NexaMind Backend
+# 🧠 NexaMind – AI-Powered Interview Preparation Platform
 
-Express and MongoDB backend for NexaMind, an AI-powered interview preparation application. The API lets users create accounts, generate interview reports from a resume and job description, retrieve saved reports, and generate a tailored resume PDF.
+NexaMind is an AI-powered interview preparation platform that helps candidates get interview-ready based on their **resume**, **target job description**, and **self-description**. It generates tailored interview reports, technical and behavioral questions, a personalized preparation roadmap, resume–job match scoring, skill gap analysis, and a downloadable tailored resume PDF.
 
-## Features
+This repository contains **both the frontend (React + Vite) and backend (Node.js + Express + MongoDB)** for NexaMind.
 
-- User registration and login
-- JWT authentication stored in an HTTP cookie
-- Logout with token blacklisting
-- Resume PDF text extraction
-- AI-generated interview reports using Google Gemini
-- Saved interview reports in MongoDB
-- AI-generated resume HTML converted to PDF with Puppeteer
+---
 
-## Requirements
+## 🚀 Features
 
-- Node.js 18 or newer
+- 🔐 User registration & login (JWT auth via HTTP-only cookie)
+- 🛡️ Protected routes and authenticated endpoints
+- 👤 Authentication state management
+- 📄 Resume upload & PDF text extraction
+- 💼 Job description input
+- 🧑‍💻 Self-description input
+- 🤖 AI-powered interview preparation (Google Gemini)
+- 📝 Technical interview questions
+- 💬 Behavioral interview questions
+- 🗺️ Personalized preparation roadmap
+- 📊 Resume–job match score
+- 🎯 Skill gap analysis
+- 📑 Saved interview reports
+- 📥 AI-generated, tailored resume PDF download
+- 📱 Responsive UI
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- React.js
+- Vite
+- Tailwind CSS
+- React Router
+- JavaScript (ES6+)
+- Context API
+- Custom React Hooks
+- Fetch/API Services
+
+### Backend
+- Node.js + Express
+- MongoDB (Mongoose)
+- JWT authentication (HTTP cookie) with logout token blacklisting
+- Zod for validation
+- Puppeteer (HTML → PDF generation)
+
+### AI
+- Google Gemini API
+
+### Database
+- MongoDB
+
+---
+
+## 🏗️ Architecture Overview
+
+```text
+Components / Pages
+        ↓
+Custom Hooks
+        ↓
+Context / State Management
+        ↓
+API Services
+        ↓
+Backend API (Express)
+        ↓
+MongoDB + Google Gemini + Puppeteer
+```
+
+---
+
+## 📁 Project Structure
+
+```text
+nexamind/
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   └── Interview.jsx
+│   │   ├── hooks/
+│   │   │   ├── useAuth.js
+│   │   │   └── useInterview.js
+│   │   ├── services/
+│   │   │   ├── api.auth.js
+│   │   │   └── api.interview.js
+│   │   ├── context/
+│   │   │   └── auth.context.jsx
+│   │   ├── routes/
+│   │   │   └── Protected.jsx
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+└── backend/
+    ├── server.js
+    ├── src/
+    │   ├── app.js
+    │   ├── config/database.js
+    │   ├── controllers/
+    │   ├── middlewares/
+    │   ├── models/
+    │   ├── routers/
+    │   └── services/
+    ├── .env
+    └── package.json
+```
+
+---
+
+## ⚙️ Requirements
+
+- Node.js 18+
 - MongoDB database
 - Google Gemini API key
 - Chromium supported by Puppeteer
 
-## Installation
+---
 
-From this directory:
+## 📦 Installation
+
+### 1. Clone the repository
 
 ```bash
-npm install
+git clone https://github.com/your-username/nexamind.git
+cd nexamind
 ```
 
-The service imports `zod`, so install it if it is not already present in the project dependencies:
+### 2. Backend setup
 
 ```bash
+cd backend
+npm install
 npm install zod
 ```
 
-## Environment Variables
-
-Create a `.env` file in the `backend` directory:
+Create a `.env` file inside `backend/`:
 
 ```env
 MONGO_URI=mongodb://127.0.0.1:27017/nexamind
@@ -43,127 +151,142 @@ JWT_SECURET=replace-with-a-long-random-secret
 GOOGLE_GENAI_API_KEY=your-gemini-api-key
 ```
 
-`JWT_SECURET` is the variable name currently used by the authentication code. Keep the spelling unchanged unless the application code is updated as well.
+> ⚠️ `JWT_SECURET` is the exact variable name used by the auth code — keep the spelling as-is unless you also update the application code.
 
-## Run the Server
-
-Start the development server with:
+Start the backend:
 
 ```bash
 npm start
 ```
 
-The API is available at:
+Backend runs at:
 
 ```text
 http://localhost:3000
 ```
 
-## Authentication
+### 3. Frontend setup
 
-Registering or logging in sets a `token` cookie. Protected endpoints read this cookie automatically, so clients must preserve cookies between requests.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-For `curl`, use `-c cookies.txt` when registering or logging in and `-b cookies.txt` on protected requests.
+---
 
-## API Endpoints
+## 🔑 Authentication
+
+Registering or logging in sets a `token` HTTP-only cookie. Protected endpoints read this cookie automatically — clients must preserve cookies between requests.
+
+For `curl`, use `-c cookies.txt` when registering/logging in, and `-b cookies.txt` on protected requests.
+
+---
+
+## 📡 API Reference
 
 ### Authentication
 
 | Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
+|--------|----------|------|-------------|
 | `POST` | `/api/auth/register` | No | Create a user account |
 | `POST` | `/api/auth/login` | No | Log in and receive an auth cookie |
-| `GET` | `/api/auth/logout` | No | Clear and blacklist the current auth cookie |
-| `GET` | `/api/auth/get-me` | Yes | Get the currently authenticated user |
+| `GET`  | `/api/auth/logout` | No | Clear and blacklist the current auth cookie |
+| `GET`  | `/api/auth/get-me` | Yes | Get the currently authenticated user |
 
-#### Register
+**Register**
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/register ^
-  -H "Content-Type: application/json" ^
-  -c cookies.txt ^
-  -d "{\"username\":\"Ava\",\"email\":\"ava@example.com\",\"password\":\"password123\"}"
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"username":"Ava","email":"ava@example.com","password":"password123"}'
 ```
 
-#### Login
+**Login**
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/login ^
-  -H "Content-Type: application/json" ^
-  -c cookies.txt ^
-  -d "{\"email\":\"ava@example.com\",\"password\":\"password123\"}"
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"email":"ava@example.com","password":"password123"}'
 ```
 
 ### Interview Reports
 
 | Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
+|--------|----------|------|-------------|
 | `POST` | `/api/interview` | Yes | Generate and save an interview report |
-| `GET` | `/api/interview` | Yes | Get all reports for the logged-in user |
-| `GET` | `/api/interview/report/:interviewId` | Yes | Get one report owned by the logged-in user |
+| `GET`  | `/api/interview` | Yes | Get all reports for the logged-in user |
+| `GET`  | `/api/interview/report/:interviewId` | Yes | Get one report owned by the logged-in user |
 | `POST` | `/api/interview/resume/pdf/:interviewReportId` | Yes | Generate and download a tailored resume PDF |
 
-#### Generate an Interview Report
+**Generate an Interview Report**
 
 Send `multipart/form-data` with:
-
-- `resume`: resume PDF file
-- `jobDescription`: target job description
-- `selfDescription`: optional candidate self-description
+- `resume` — resume PDF file
+- `jobDescription` — target job description
+- `selfDescription` — optional candidate self-description
 
 ```bash
-curl -X POST http://localhost:3000/api/interview ^
-  -b cookies.txt ^
-  -F "resume=@C:\path\to\resume.pdf" ^
-  -F "jobDescription=Looking for a Node.js developer with MongoDB experience" ^
+curl -X POST http://localhost:3000/api/interview \
+  -b cookies.txt \
+  -F "resume=@/path/to/resume.pdf" \
+  -F "jobDescription=Looking for a Node.js developer with MongoDB experience" \
   -F "selfDescription=Backend developer building REST APIs with Node.js"
 ```
 
-Resume uploads are stored in memory and are limited to 5 MB. The endpoint extracts the PDF text, sends the candidate information to Gemini, saves the generated report, and returns the report as JSON.
+Resume uploads are stored in memory and limited to 5 MB. The endpoint extracts the PDF text, sends candidate info to Gemini, saves the generated report, and returns it as JSON.
 
-#### Get Reports
+**Get All Reports**
 
 ```bash
 curl http://localhost:3000/api/interview -b cookies.txt
 ```
 
-#### Get One Report
+**Get One Report**
 
 ```bash
 curl http://localhost:3000/api/interview/report/INTERVIEW_REPORT_ID -b cookies.txt
 ```
 
-#### Download a Tailored Resume PDF
+**Download a Tailored Resume PDF**
 
 ```bash
-curl -X POST ^
-  http://localhost:3000/api/interview/resume/pdf/INTERVIEW_REPORT_ID ^
-  -b cookies.txt ^
+curl -X POST \
+  http://localhost:3000/api/interview/resume/pdf/INTERVIEW_REPORT_ID \
+  -b cookies.txt \
   -o tailored-resume.pdf
 ```
 
-The response has `Content-Type: application/pdf` and an attachment filename based on the report ID.
+Response has `Content-Type: application/pdf` with an attachment filename based on the report ID.
 
-## Project Structure
+---
 
-```text
-backend/
-├── server.js                 # Application entry point
-├── src/
-│   ├── app.js                # Express app and route mounting
-│   ├── config/database.js    # MongoDB connection
-│   ├── controllers/          # Request handlers
-│   ├── middlewares/          # Auth and file-upload middleware
-│   ├── models/               # Mongoose models
-│   ├── routers/              # API route definitions
-│   └── services/             # Gemini and PDF generation services
-├── .env                      # Local secrets, not committed
-└── package.json
-```
+## 📝 Notes
 
-## Notes
-
-- Do not commit `.env` or API keys.
+- Do not commit `.env` files or API keys.
 - Protected requests require the `token` cookie created during registration or login.
-- Gemini response generation requires a valid `GOOGLE_GENAI_API_KEY`.
-- Puppeteer may download a browser during installation and needs permission to launch it in the runtime environment.
+- Gemini report generation requires a valid `GOOGLE_GENAI_API_KEY`.
+- Puppeteer may download a browser during install and needs permission to launch it at runtime.
+
+---
+
+## 🗺️ Roadmap Ideas
+
+- [ ] Dark mode
+- [ ] Multi-language support
+- [ ] Interview practice with voice input
+- [ ] Team/organization accounts
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome. Feel free to open a PR or an issue.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
