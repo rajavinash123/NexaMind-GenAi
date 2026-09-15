@@ -1,20 +1,103 @@
-# React + Vite
+# NexaMind – AI-Powered Interview Preparation Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+NexaMind is an AI-powered interview preparation platform designed to help candidates prepare for technical and behavioral interviews based on their resume, job description, and self-description.
 
-Currently, two official plugins are available:
+This repository contains the **frontend application** of NexaMind, built with React and Vite.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Features
 
-## React Compiler
+- 🔐 User Login & Registration
+- 🛡️ Protected Routes
+- 👤 Authentication State Management
+- 📄 Resume Upload
+- 💼 Job Description Input
+- 🧑‍💻 Self-Description Input
+- 🤖 AI-Powered Interview Preparation
+- 📝 Technical Interview Questions
+- 💬 Behavioral Interview Questions
+- 🗺️ Personalized Preparation Roadmap
+- 📊 Resume–Job Match Score
+- 🎯 Skill Gap Analysis
+- 📑 Interview Reports
+- 📥 Resume PDF Download
+- 📱 Responsive UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the Oxlint configuration
+### Frontend
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- React.js
+- Vite
+- Tailwind CSS
+- React Router
+- JavaScript (ES6+)
+- Context API
+- Custom React Hooks
+- Fetch/API Services
 
+### Backend
 
+The frontend communicates with a separate Node.js/Express backend for:
 
+- Authentication
+- Resume processing
+- AI interview generation
+- Interview reports
+- User data
 
+### AI
+
+- Google Gemini AI
+
+### Database
+
+- MongoDB
+
+## 🏗️ Frontend Architecture
+
+The frontend follows a layered architecture to keep UI, state management, business logic, and API communication separated.
+
+```text
+Components / Pages
+        ↓
+Custom Hooks
+        ↓
+Context / State Management
+        ↓
+API Services
+        ↓
+Backend API
+frontend/
+│
+├── public/
+│
+├── src/
+│   ├── components/
+│   │
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── Home.jsx
+│   │   ├── Dashboard.jsx
+│   │   └── Interview.jsx
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   └── useInterview.js
+│   │
+│   ├── services/
+│   │   ├── api.auth.js
+│   │   └── api.interview.js
+│   │
+│   ├── context/
+│   │   └── auth.context.jsx
+│   │
+│   ├── routes/
+│   │   └── Protected.jsx
+│   │
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── package.json
+├── vite.config.js
+└── README.md
